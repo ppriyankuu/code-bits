@@ -1,4 +1,5 @@
 import { EditorView } from "codemirror";
+import { object, string } from "zod";
 
 export const vsCodeTheme = EditorView.theme(
   {
@@ -48,3 +49,8 @@ export const vsCodeTheme = EditorView.theme(
   },
   { dark: true }
 );
+
+
+export const reqSchema = object({
+  content: string(),
+});

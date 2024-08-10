@@ -1,20 +1,22 @@
+'use client'
+
 import { useEffect, useRef, useState } from "react"
 import { EditorState } from '@codemirror/state';
 import { basicSetup, EditorView } from "codemirror";
 import { javascript } from '@codemirror/lang-javascript' 
 
-export const Share = () => {
+export const Share = ({documentId: initialDocumentId = ''}) => {
     const editorRef = useRef<HTMLDivElement | null>(null);
-    const [documentId, setDocumentId] = useState<string>('');
-    const [editorContent, setEditorContent] = useState(localStorage.getItem(`${window.location.pathname.slice(1)}`));
+    const [documentId, setDocumentId] = useState<string>(initialDocumentId);
+    const [editorContent, setEditorContent] = useState<string | null>(null);
 
     useEffect(() => {
-        const path = window.location.pathname.slice(1);
+        const path = initialDocumentId ?? window.location.pathname.slice(1);
         if(path.length > 1){
-            // TODO
+            handleFetchData(path);
             setDocumentId(path);
         } else {
-            // something TODO
+            handleDocumentCreation();
             setDocumentId(path);
         }
 
@@ -26,7 +28,8 @@ export const Share = () => {
         if(!editorContent) return;
         localStorage.setItem(`${documentId}`, editorContent);
         const updatedData = localStorage.getItem(`${documentId}`);
-        // TODO
+        if(!updatedData) return;
+        handleDocumentUpdation(documentId, updatedData);
     }, [editorContent]);
 
     useEffect(() => {
@@ -54,9 +57,7 @@ export const Share = () => {
 
     async function handleDocumentCreation() {
         try {
-           const response = await fetch(
-                'https://notepadbackend-y9k7.onrender.com/save',
-                {
+           const response = await fetch('/api/documents', {
                     method: 'POST',
                     headers: {
                         'Content-type': 'application/json',
@@ -85,19 +86,13 @@ export const Share = () => {
 
     async function handleDocumentUpdation(id: string, updatedData: string){
         try {
-            const response = await fetch(
-                'https://notepadbackend-y9k7.onrender.com/save',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        id,
-                        content: updatedData,
-                    }),
-                }
-            );
+            const response = await fetch(`/api/documents/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json',
+                },
+                body: JSON.stringify({ content: updatedData }),
+            });
             
             if(!response.ok) return;
 
@@ -111,7 +106,7 @@ export const Share = () => {
 
     async function handleFetchData(docId: string){
         try {
-            const response = await fetch(`https://notepadbackend-y9k7.onrender.com/fetch/${docId}`);
+            const response = await fetch(`/api/documents/${docId}`);
 
             if(!response.ok) return;
 
@@ -126,10 +121,10 @@ export const Share = () => {
 
     return (
         <div>
-            {<div 
+            <div 
                 ref={editorRef} 
                 style={{height: "500px", width: "1100px", border: "1px solid #333"}}
-            ></div>} 
+            ></div>
         </div>
     )
 }
