@@ -83,6 +83,47 @@ export const Share = () => {
         }
     }
 
+    async function handleDocumentUpdation(id: string, updatedData: string){
+        try {
+            const response = await fetch(
+                'https://notepadbackend-y9k7.onrender.com/save',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id,
+                        content: updatedData,
+                    }),
+                }
+            );
+            
+            if(!response.ok) return;
+
+            const data = await response.json();
+            if(data.data.text === editorContent) return;
+            else throw new Error("content didn't get updated!!!");
+        } catch (error: any) {
+            console.log('Unable to update the document' + error.message);
+        }
+    }
+
+    async function handleFetchData(docId: string){
+        try {
+            const response = await fetch(`https://notepadbackend-y9k7.onrender.com/fetch/${docId}`);
+
+            if(!response.ok) return;
+
+            const data = await response.json();
+
+            const stuff = data.data.text;
+            window.localStorage.setItem(`${docId}`, stuff);
+        } catch (error: any) {
+            console.log(`Unable to fetch data from the backend : ${error.message}`);
+        }
+    }
+
     return (
         <div>
             {<div 
