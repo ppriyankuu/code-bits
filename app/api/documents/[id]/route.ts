@@ -18,12 +18,13 @@ export async function GET(_req: NextRequest, {params}: {params:{id: string}}){
     }
 }
 
-export async function POST(req: NextRequest, {params}: {params:{id: string}}){
+export async function POST(req: NextRequest, {params}: {params:{id: string}}) {
     const body = await req.json();
     const { success, data } = reqSchema.safeParse(body);
 
-    if(!success)
+    if (!success)
        return NextResponse.json({message: 'invalid input'}, {status: 400});
+       
     const content = data.content;
 
     try {
@@ -32,9 +33,9 @@ export async function POST(req: NextRequest, {params}: {params:{id: string}}){
             data: { content },
         });
 
-       return NextResponse.json({data: document}, {status: 200});
+        return NextResponse.json({data: document}, {status: 200});
     } catch (error: any) {
         console.log('document updation failed!!!', error.message);
-        return NextResponse.json({message: 'INTERNAL SERVER ERROR'}, {status: 500});
+        return NextResponse.json({message: 'Document not found or update failed'}, {status: 404});
     }
 }
