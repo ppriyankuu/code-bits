@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react"
-import { EditorState } from '@codemirror/state';
+import { useEffect, useRef, useState } from "react";
+import { EditorState, Extension } from '@codemirror/state';
 import { basicSetup, EditorView } from "codemirror";
-import { javascript } from '@codemirror/lang-javascript' 
+import { javascript } from '@codemirror/lang-javascript';
 
 export const Share = ({ documentId: initialDocumentId = '' }) => {
     const editorRef = useRef<HTMLDivElement | null>(null);
@@ -20,21 +20,14 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
         } else {
             setDocumentId(path);
         }
-        
-        const storedContent = localStorage.getItem(path);
-        if (storedContent) {
-            setEditorContent(storedContent);
-        }
-        
+
         setHasLoaded(true);
     }, [initialDocumentId]);
 
     useEffect(() => {
         if (hasLoaded) {
             localStorage.setItem(`${documentId}`, editorContent);
-            const updatedData = localStorage.getItem(`${documentId}`);
-            if (!updatedData) return;
-            handleDocumentUpdation(documentId, updatedData);
+            handleDocumentUpdation(documentId, editorContent);
         }
     }, [editorContent]);
 
@@ -47,14 +40,14 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
                 basicSetup,
                 javascript(),
                 EditorView.updateListener.of((v) => {
-                    if (!v.docChanged) return;
-                    setEditorContent(v.state.doc.toString());
-
-                    if (!documentId) {
-                        handleDocumentCreation();
+                    if (v.docChanged) {
+                        setEditorContent(v.state.doc.toString());
+                        if (!documentId) {
+                            handleDocumentCreation();
+                        }
                     }
                 }),
-            ],
+            ] as Extension[], // Correctly cast as an array of Extension
         });
 
         const view = new EditorView({
@@ -70,10 +63,10 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
     useEffect(() => {
         const view = editorViewRef.current;
         if (view) {
-            const transaction = view.state.update({
-                changes: { from: 0, to: view.state.doc.length, insert: editorContent }
+            view.dispatch({
+                changes: { from: 0, to: view.state.doc.length, insert: editorContent },
+                // No need to set the state here directly, as it's managed by useEffect dependencies
             });
-            view.dispatch(transaction);
         }
     }, [editorContent]);
 
@@ -92,9 +85,7 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
                 headers: {
                     'Content-type': 'application/json',
                 },
-                body: JSON.stringify({
-                    content: editorContent,
-                }),
+                body: JSON.stringify({ content: editorContent }),
             });
 
             if (!response.ok) {
@@ -103,8 +94,6 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
             }
 
             const data = await response.json();
-            console.log('Document creation response:', data);
-
             if (data && data.data.id) {
                 const id = data.data.id;
                 setDocumentId(id);
@@ -129,9 +118,9 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
 
             const data = await response.json();
             if (data.data.content === editorContent) return;
-            else throw new Error("content didn't get updated!!!");
+            else throw new Error("Content didn't get updated!!!");
         } catch (error: any) {
-            console.log('Unable to update the document' + error.message);
+            console.log('Unable to update the document: ' + error.message);
         }
     }
 
@@ -142,12 +131,11 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
             if (!response.ok) return;
 
             const data = await response.json();
-
-            const stuff = data.data.content;
-            window.localStorage.setItem(`${docId}`, stuff);
-            setEditorContent(stuff);
+            const content = data.data.content;
+            localStorage.setItem(`${docId}`, content);
+            setEditorContent(content);
         } catch (error: any) {
-            console.log(`Unable to fetch data from the backend : ${error.message}`);
+            console.log(`Unable to fetch data from the backend: ${error.message}`);
         }
     }
 
@@ -155,8 +143,8 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
         <div>
             <div 
                 ref={editorRef} 
-                style={{height: "500px", width: "1100px", border: "1px solid #333", background: "#98809f"}}
+                style={{height: "700px", width: "1100px", border: "1px solid #333", background: "#98809f", overflow: 'scroll'}}
             ></div>
         </div>
-    )
+    );
 }
