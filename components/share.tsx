@@ -47,7 +47,7 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
                         }
                     }
                 }),
-            ] as Extension[], // Correctly cast as an array of Extension
+            ] as Extension[],
         });
 
         const view = new EditorView({
@@ -65,7 +65,6 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
         if (view) {
             view.dispatch({
                 changes: { from: 0, to: view.state.doc.length, insert: editorContent },
-                // No need to set the state here directly, as it's managed by useEffect dependencies
             });
         }
     }, [editorContent]);
@@ -143,7 +142,7 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
         <div>
             <div 
                 ref={editorRef} 
-                style={{height: "700px", width: "1100px", border: "1px solid #333", background: "#98809f", overflow: 'scroll'}}
+                style={{height: "500px", width: "1100px", border: "1px solid #333", background: "#98809f", overflow: 'scroll'}}
             ></div>
         </div>
     );
