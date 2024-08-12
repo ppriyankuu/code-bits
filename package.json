@@ -14,12 +14,14 @@
     "@codemirror/view": "^6.30.0",
     "@prisma/client": "5.18.0",
     "codemirror": "^6.0.1",
+    "lodash.debounce": "^4.0.8",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
