@@ -17,30 +17,30 @@ Efficient and Effortless code sharing application. `Fun Kitty Project`
 Clone the project
 
 ```sh
-  $ git clone https://github.com/ppriyankuu/code-bits
+$ git clone https://github.com/ppriyankuu/code-bits
 ```
 
 Go to the project directory
 
 ```sh
-  $ cd code-bits
+$ cd code-bits
 ```
 
 Install dependencies
 
 ```sh
-  $ npm install
+$ npm install
 ```
 
 Migrate the database
 ```sh
-  $ npx prisma migrate dev
+$ npx prisma migrate dev
 ```
 
 Start the server
 
 ```sh
-  $ npm run dev
+$ npm run dev
 ```
 
 
