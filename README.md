@@ -38,7 +38,6 @@ $ npx prisma migrate dev
 ```
 
 Start the server
-
 ```sh
 $ npm run dev
 ```
