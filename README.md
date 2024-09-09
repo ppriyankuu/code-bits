@@ -1,4 +1,3 @@
-
 # CodeBits
 Efficient and Effortless code sharing application. `Fun Kitty Project`
 
@@ -16,32 +15,31 @@ Efficient and Effortless code sharing application. `Fun Kitty Project`
 
 Clone the project
 
-```bash
+```sh
 $ git clone https://github.com/ppriyankuu/code-bits
 ```
 
 Go to the project directory
 
-```bash
+```sh
 $ cd code-bits
 ```
 
 Install dependencies
 
-```bash
+```sh
 $ npm install
 ```
 
 Migrate the database
-```bash
+```sh
 $ npx prisma migrate dev
 ```
 
 Start the server
-```bash
+```sh
 $ npm run dev
 ```
-
 
 ## Author
 - [@Priyanku Gogoi](https://github.com/ppriyankuu)
