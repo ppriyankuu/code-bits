@@ -157,7 +157,7 @@ export const Share = ({ documentId: initialDocumentId = '' }) => {
     return (
         <div>
             <div 
-                ref={editorRef} 
+                ref={ editorRef } 
                 style={{height: "500px", width: "1100px", border: "1px solid #333", background: "#98809f", overflow: 'scroll'}}
             ></div>
         </div>
